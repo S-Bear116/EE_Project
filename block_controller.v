@@ -11,18 +11,31 @@ module block_controller(
    );
 	wire block_fill;
 	wire line1_fill;
+	wire obst_fill;
+	reg[1:0] dir1, dir2, dir3, dir4, dir5, dir6, dir7, dir8;
 
 	
 	//these two values dictate the center of the block, incrementing and decrementing them leads the block to move in certain directions
 	reg [9:0] xpos, ypos;
+	reg [9:0] o1xpos, o1ypos;
+	reg [9:0] o2xpos, o2ypos;
+	reg [9:0] o3xpos, o3ypos;
+	reg [9:0] o4xpos, o4ypos;
+	reg [9:0] o5xpos, o5ypos;
+	reg [9:0] o6xpos, o6ypos;
+	reg [9:0] o7xpos, o7ypos;
+	reg [9:0] o8xpos, o8ypos;
 	
 	parameter RED   = 12'b1111_0000_0000;
+	parameter BLUE  = 12'b0000_0000_1111;
 	
 	/*when outputting the rgb value in an always block like this, make sure to include the if(~bright) statement, as this ensures the monitor 
 	will output some data to every pixel and not just the images you are trying to display*/
 	always@ (*) begin
     	if(~bright )	//force black if not inside the display area
 			rgb = 12'b0000_0000_0000;
+		else if (obst_fill)
+			rgb = BLUE;
 		else if (block_fill) 
 			rgb = RED; 
 		else if (line1_fill)
@@ -35,28 +48,47 @@ module block_controller(
 
 	assign block_fill=vCount>=(ypos-5) && vCount<=(ypos+5) && hCount>=(xpos-5) && hCount<=(xpos+5);
 
-	assign line1_fill=(vCount>=(168) && vCount<=(718) && hCount>=(78) && hCount<=(80))
-	|| (vCount>=(168) && vCount<=(171) && hCount>=(79) && hCount<=(118))
-	|| (vCount>=(168) && vCount<=(687) && hCount>=(115) && hCount<=(117))
-	|| (vCount>=(716) && vCount<=(718) && hCount>=(80) && hCount<=(483))
-	|| (vCount>=(685) && vCount<=(687) && hCount>=(117) && hCount<=(447))
-	|| (vCount>=(207) && vCount<=(716) && hCount>=(481) && hCount<=(483))
-	|| (vCount>=(685) && vCount<=(244) && hCount>=(447) && hCount<=(449))
-	|| (vCount>=(206) && vCount<=(208) && hCount>=(154) && hCount<=(483))
-	|| (vCount>=(206) && vCount<=(646) && hCount>=(154) && hCount<=(156))
-	|| (vCount>=(244) && vCount<=(246) && hCount>=(188) && hCount<=(447))
-	|| (vCount>=(244) && vCount<=(610) && hCount>=(190) && hCount<=(192))
-	|| (vCount>=(646) && vCount<=(648) && hCount>=(156) && hCount<=(410))
-	|| (vCount>=(610) && vCount<=(612) && hCount>=(192) && hCount<=(372))
-	|| (vCount>=(648) && vCount<=(279) && hCount>=(408) && hCount<=(410))
-	|| (vCount>=(610) && vCount<=(318) && hCount>=(371) && hCount<=(373))
-	|| (vCount>=(279) && vCount<=(281) && hCount>=(226) && hCount<=(410))
-	|| (vCount>=(280) && vCount<=(574) && hCount>=(225) && hCount<=(227))
-	|| (vCount>=(316) && vCount<=(318) && hCount>=(373) && hCount<=(264))
-	|| (vCount>=(318) && vCount<=(572) && hCount>=(262) && hCount<=(264))
-	|| (vCount>=(572) && vCount<=(574) && hCount>=(225) && hCount<=(262));
-    
 
+	
+
+
+	assign obst_fill= (((hCount-o1xpos)*(hCount-o1xpos)+(vCount-o1ypos)*(vCount-o1ypos))<= 256)
+		|| (((hCount-o2xpos)*(hCount-o2xpos)+(vCount-o2ypos)*(vCount-o2ypos))<= 256)
+		|| (((hCount-o3xpos)*(hCount-o3xpos)+(vCount-o3ypos)*(vCount-o3ypos))<= 256)
+		|| (((hCount-o4xpos)*(hCount-o4xpos)+(vCount-o4ypos)*(vCount-o4ypos))<= 256)
+		|| (((hCount-o5xpos)*(hCount-o5xpos)+(vCount-o5ypos)*(vCount-o5ypos))<= 256)
+		|| (((hCount-o6xpos)*(hCount-o6xpos)+(vCount-o6ypos)*(vCount-o6ypos))<= 256)
+		|| (((hCount-o7xpos)*(hCount-o7xpos)+(vCount-o7ypos)*(vCount-o7ypos))<= 256)
+		|| (((hCount-o8xpos)*(hCount-o8xpos)+(vCount-o8ypos)*(vCount-o8ypos))<= 256);
+
+	
+
+
+
+
+
+
+
+	assign line1_fill=(hCount>=(168) && hCount<=(718) && vCount>=(78) && vCount<=(80))
+	    || (hCount>=(168) && hCount<=(171) && vCount>=(79) && vCount<=(118))
+	    || (hCount>=(168) && hCount<=(687) && vCount>=(115) && vCount<=(117))
+	    || (hCount>=(716) && hCount<=(718) && vCount>=(80) && vCount<=(483))
+	    || (hCount>=(685) && hCount<=(687) && vCount>=(117) && vCount<=(447))
+	    || (hCount>=(207) && hCount<=(716) && vCount>=(481) && vCount<=(483))
+	    || (hCount>=(244) && hCount<=(685) && vCount>=(447) && vCount<=(449))
+	    || (hCount>=(206) && hCount<=(208) && vCount>=(154) && vCount<=(483))
+	    || (hCount>=(206) && hCount<=(646) && vCount>=(154) && vCount<=(156))
+	    || (hCount>=(244) && hCount<=(246) && vCount>=(188) && vCount<=(447))
+	    || (hCount>=(244) && hCount<=(610) && vCount>=(190) && vCount<=(192))
+	    || (hCount>=(646) && hCount<=(648) && vCount>=(156) && vCount<=(410))
+	    || (hCount>=(610) && hCount<=(612) && vCount>=(192) && vCount<=(372))
+	    || (hCount>=(279) && hCount<=(648) && vCount>=(408) && vCount<=(410))
+	    || (hCount>=(318) && hCount<=(610) && vCount>=(371) && vCount<=(373))
+	    || (hCount>=(279) && hCount<=(281) && vCount>=(226) && vCount<=(410))
+	    || (hCount>=(280) && hCount<=(574) && vCount>=(225) && vCount<=(227))
+	    || (hCount>=(316) && hCount<=(318) && vCount>=(264) && vCount<=(373))
+	    || (hCount>=(318) && hCount<=(572) && vCount>=(262) && vCount<=(264))
+	    || (hCount>=(572) && hCount<=(574) && vCount>=(225) && vCount<=(262));
 
 
 
@@ -90,31 +122,288 @@ module block_controller(
 			//rough values for center of screen
 			xpos<=450;
 			ypos<=250;
+
+
+			
+			//stop at x=226
+			o1xpos<=334;
+			o1ypos<=98;
+			dir1<=0;
+
+			//stop at x=226
+			o2xpos<=482;
+			o2ypos<=98;
+			dir2<=0;
+
+			//stop at y=465
+			o3xpos<=626;
+			o3ypos<=98;
+			dir3<=0;
+
+			//stop at y=465
+			o4xpos<=703;
+			o4ypos<=169;
+			dir4<=0;
+
+			//stops at x=703
+			o5xpos<=480;
+			o5ypos<=465;
+			dir5<=1;
+
+			//stops at y=98
+			o6xpos<=338;
+			o6ypos<=465;
+			dir6<=1;
+
+			//stops at y=98
+			o7xpos<=226;
+			o7ypos<=430;
+			dir7<=1;
+
+			//stops at y=98
+			o8xpos<=226;
+			o8ypos<=281;
+			dir8<=1;
 		end
 		else if (clk) begin
 		
-		/* Note that the top left of the screen does NOT correlate to vCount=0 and hCount=0. The display_controller.v file has the 
-			synchronizing pulses for both the horizontal sync and the vertical sync begin at vcount=0 and hcount=0. Recall that after 
-			the length of the pulse, there is also a short period called the back porch before the display area begins. So effectively, 
-			the top left corner corresponds to (hcount,vcount)~(144,35). Which means with a 640x480 resolution, the bottom right corner 
-			corresponds to ~(783,515).  
-		*/
+		//move the ciurcle :)
+
+		if(dir1 == 1)
+		begin
+			o1xpos<=o1xpos + 1;
+			o1ypos<=o1ypos - 1;
+			if(o1xpos >= 334)
+				dir1<=0;
+		end
+		else
+		begin
+			o1xpos<=o1xpos - 1;
+			o1ypos<=o1ypos + 1;
+			if(o1xpos <= 226)
+				dir1<=1;
+		end
+
+		if(dir2 == 1)
+		begin
+			o2xpos<=o2xpos + 1;
+			o2ypos<=o2ypos - 1;
+			if(o2xpos >= 482)
+				dir2<=0;
+		end
+		else
+		begin
+			o2xpos<=o2xpos - 1;
+			o2ypos<=o2ypos + 1;
+			if(o2xpos <= 226)
+				dir2<=1;
+		end
+
+		if(dir3 == 1)
+		begin
+			o3xpos<=o3xpos + 1;
+			o3ypos<=o3ypos - 1;
+			if(o3ypos <= 98)
+				dir3<=0;
+		end
+		else
+		begin
+			o3xpos<=o3xpos - 1;
+			o3ypos<=o3ypos + 1;
+			if(o3ypos >= 465)
+				dir3<=1;
+		end
+
+		if(dir4 == 1)
+		begin
+			o4xpos<=o4xpos + 1;
+			o4ypos<=o4ypos - 1;
+			if(o4ypos <= 169)
+				dir4<=0;
+		end
+		else
+		begin
+			o4xpos<=o4xpos - 1;
+			o4ypos<=o4ypos + 1;
+			if(o4ypos >= 465)
+				dir4<=1;
+		end
+
+		if(dir5 == 1)
+		begin
+			o5xpos<=o5xpos + 1;
+			o5ypos<=o5ypos - 1;
+			if(o5xpos >= 703)
+				dir5<=0;
+		end
+		else
+		begin
+			o5xpos<=o5xpos - 1;
+			o5ypos<=o5ypos + 1;
+			if(o5xpos <= 465)
+				dir5<=1;
+		end
+
+		if(dir6 == 1)
+		begin
+			o6xpos<=o6xpos + 1;
+			o6ypos<=o6ypos - 1;
+			if(o6ypos <= 98)
+				dir6<=0;
+		end
+		else
+		begin
+			o6xpos<=o6xpos - 1;
+			o6ypos<=o6ypos + 1;
+			if(o6ypos >= 465)
+				dir6<=1;
+		end
+
+		if(dir7 == 1)
+		begin
+			o7xpos<=o7xpos + 1;
+			o7ypos<=o7ypos - 1;
+			if(o7ypos <= 98)
+				dir7<=0;
+		end
+		else
+		begin
+			o7xpos<=o7xpos - 1;
+			o7ypos<=o7ypos + 1;
+			if(o7ypos >= 430)
+				dir7<=1;
+		end
+
+		if(dir8 == 1)
+		begin
+			o8xpos<=o8xpos + 1;
+			o8ypos<=o8ypos - 1;
+			if(o8ypos <= 98)
+				dir8<=0;
+		end
+		else
+		begin
+			o8xpos<=o8xpos - 1;
+			o8ypos<=o8ypos + 1;
+			if(o8ypos >= 281)
+				dir8<=1;
+		end
+
+
+		
 			if(right) begin
 				 //change the amount you increment to make the speed faster 
 				if(xpos < 800) //these are rough values to attempt looping around, you can fine-tune them to make it more accurate- refer to the block comment above
 					xpos<=xpos+1;
+				
+				if( ((ypos > 78)  &&  (ypos < 80) && (xpos == 163)) ||
+					((ypos > 79)  &&  (ypos < 118) && (xpos == 163)) ||
+					((ypos > 115)  &&  (ypos < 117) && (xpos == 163)) ||
+					((ypos > 80)  &&  (ypos < 483) && (xpos == 711)) ||
+					((ypos > 117)  &&  (ypos < 447) && (xpos == 680)) ||
+					((ypos > 481)  &&  (ypos < 483) && (xpos == 202)) ||
+					((ypos > 447)  &&  (ypos < 449) && (xpos == 239)) ||
+					((ypos > 154)  &&  (ypos < 483) && (xpos == 201)) ||
+					((ypos > 154)  &&  (ypos < 156) && (xpos == 201)) ||
+					((ypos > 188)  &&  (ypos < 447) && (xpos == 239)) ||
+					((ypos > 190)  &&  (ypos < 192) && (xpos == 239)) ||
+					((ypos > 156)  &&  (ypos < 410) && (xpos == 641)) ||
+					((ypos > 192)  &&  (ypos < 372) && (xpos == 605)) ||
+					((ypos > 408)  &&  (ypos < 410) && (xpos == 274)) ||
+					((ypos > 371)  &&  (ypos < 373) && (xpos == 313)) ||
+					((ypos > 226)  &&  (ypos < 410) && (xpos == 274)) ||
+					((ypos > 225)  &&  (ypos < 227) && (xpos == 275)) ||
+					((ypos > 264)  &&  (ypos < 373) && (xpos == 311)) ||
+					((ypos > 262)  &&  (ypos < 264) && (xpos == 313)) ||
+					((ypos > 225)  &&  (ypos < 262) && (xpos == 567)) )
+				begin
+					xpos <= xpos;
+				end
+				
 			end
 			if(left) begin
 				if(xpos > 150)
 					xpos<=xpos-1;
+					
+				if( ((ypos > 78)  &&  (ypos < 80) && (xpos == 723)) ||
+					((ypos > 79)  &&  (ypos < 118) && (xpos == 176)) ||
+					((ypos > 115)  &&  (ypos < 117) && (xpos == 692)) ||
+					((ypos > 80)  &&  (ypos < 483) && (xpos == 723)) ||
+					((ypos > 117)  &&  (ypos < 447) && (xpos == 692)) ||
+					((ypos > 481)  &&  (ypos < 483) && (xpos == 721)) ||
+					((ypos > 447)  &&  (ypos < 449) && (xpos == 690)) ||
+					((ypos > 154)  &&  (ypos < 483) && (xpos == 213)) ||
+					((ypos > 154)  &&  (ypos < 156) && (xpos == 651)) ||
+					((ypos > 188)  &&  (ypos < 447) && (xpos == 251)) ||
+					((ypos > 190)  &&  (ypos < 192) && (xpos == 615)) ||
+					((ypos > 156)  &&  (ypos < 410) && (xpos == 653)) ||
+					((ypos > 192)  &&  (ypos < 372) && (xpos == 617)) ||
+					((ypos > 408)  &&  (ypos < 410) && (xpos == 653)) ||
+					((ypos > 371)  &&  (ypos < 373) && (xpos == 615)) ||
+					((ypos > 226)  &&  (ypos < 410) && (xpos == 286)) ||
+					((ypos > 225)  &&  (ypos < 227) && (xpos == 579)) ||
+					((ypos > 264)  &&  (ypos < 373) && (xpos == 323)) ||
+					((ypos > 262)  &&  (ypos < 264) && (xpos == 577)) ||
+					((ypos > 225)  &&  (ypos < 262) && (xpos == 579))  )
+				begin
+					xpos <= xpos;
+				end
 			end
 			if(up) begin
 				if(ypos>34)
 					ypos<=ypos-1;
+					
+				if( ((xpos > 168)  &&  (xpos < 718) && (ypos == 85)) ||
+					((xpos > 168)  &&  (xpos < 171) && (ypos == 123)) ||
+					((xpos > 168)  &&  (xpos < 687) && (ypos == 122)) ||
+					((xpos > 716)  &&  (xpos < 718) && (ypos == 488)) ||
+					((xpos > 685)  &&  (xpos < 687) && (ypos == 452)) ||
+					((xpos > 207)  &&  (xpos < 716) && (ypos == 488)) ||
+					((xpos > 244)  &&  (xpos < 685) && (ypos == 454)) ||
+					((xpos > 206)  &&  (xpos < 208) && (ypos == 488)) ||
+					((xpos > 206)  &&  (xpos < 646) && (ypos == 161)) ||
+					((xpos > 244)  &&  (xpos < 246) && (ypos == 452)) ||
+					((xpos > 244)  &&  (xpos < 610) && (ypos == 197)) ||
+					((xpos > 646)  &&  (xpos < 648) && (ypos == 415)) ||
+					((xpos > 610)  &&  (xpos < 612) && (ypos == 377)) ||
+					((xpos > 279)  &&  (xpos < 648) && (ypos == 415)) ||
+					((xpos > 318)  &&  (xpos < 610) && (ypos == 378)) ||
+					((xpos > 279)  &&  (xpos < 281) && (ypos == 415)) ||
+					((xpos > 280)  &&  (xpos < 574) && (ypos == 232)) ||
+					((xpos > 316)  &&  (xpos < 318) && (ypos == 378)) ||
+					((xpos > 318)  &&  (xpos < 572) && (ypos == 269)) ||
+					((xpos > 572)  &&  (xpos < 574) && (ypos == 267)) )
+					begin
+						ypos <= ypos;
+					end
 			end
 			if(down) begin
 				if(ypos<514)
 					ypos<=ypos+1;
+				
+				if (((xpos > 168)  &&  (xpos < 718) && (ypos == 73)) ||
+					((xpos > 168)  &&  (xpos < 171) && (ypos == 74)) ||
+					((xpos > 168)  &&  (xpos < 687) && (ypos == 110)) ||
+					((xpos > 716)  &&  (xpos < 718) && (ypos == 75)) ||
+					((xpos > 685)  &&  (xpos < 687) && (ypos == 112)) ||
+					((xpos > 207)  &&  (xpos < 716) && (ypos == 476)) ||
+					((xpos > 244)  &&  (xpos < 685) && (ypos == 442)) ||
+					((xpos > 206)  &&  (xpos < 208) && (ypos == 149)) ||
+					((xpos > 206)  &&  (xpos < 646) && (ypos == 149)) ||
+					((xpos > 244)  &&  (xpos < 246) && (ypos == 183)) ||
+					((xpos > 244)  &&  (xpos < 610) && (ypos == 185)) ||
+					((xpos > 646)  &&  (xpos < 648) && (ypos == 151)) ||
+					((xpos > 610)  &&  (xpos < 612) && (ypos == 187)) ||
+					((xpos > 279)  &&  (xpos < 648) && (ypos == 403)) ||
+					((xpos > 318)  &&  (xpos < 610) && (ypos == 366)) ||
+					((xpos > 279)  &&  (xpos < 281) && (ypos == 221)) ||
+					((xpos > 280)  &&  (xpos < 574) && (ypos == 220)) ||
+					((xpos > 316)  &&  (xpos < 318) && (ypos == 259)) ||
+					((xpos > 318)  &&  (xpos < 572) && (ypos == 257)) ||
+					((xpos > 572)  &&  (xpos < 574) && (ypos == 220)) )
+				begin
+					ypos <= ypos;
+				end
 			end
 		end
 	end
